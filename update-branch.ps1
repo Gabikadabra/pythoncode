@@ -1,24 +1,22 @@
 param(
-    [string]$sourceBranch,   # branch to copy from
-    [string]$sourceFolder,   # folder in the source branch
-    [string]$targetBranch,   # branch to copy into
-    [string]$targetFolder    # folder in the target branch
+    [string]$sourceBranch,  # branch to copy from (e.g., develop, test)
+    [string]$targetBranch   # branch to copy into (e.g., test, prod)
 )
 
-# Switch to the target branch
-git checkout $targetBranch
+# Provjeri postoji li target branch lokalno, ako ne kreiraj ga
+$branches = git branch --list $targetBranch
+if (-not $branches) {
+    Write-Host "Target branch '$targetBranch' does not exist locally. Creating it..."
+    git checkout -b $targetBranch
+    git push -u origin $targetBranch
+} else {
+    git checkout $targetBranch
+}
 
-# Checkout the folder from the source branch
-git checkout $sourceBranch -- $sourceFolder
+# Merge all changes from source branch into target branch
+git merge $sourceBranch --no-ff -m "Merged all changes from $sourceBranch into $targetBranch"
 
-# Copy the contents to the target folder
-Copy-Item -Path "$sourceFolder\*" -Destination "$targetFolder" -Recurse -Force
-
-# Add changes to git
-git add $targetFolder
-
-# Create a commit
-git commit -m "Updated $targetFolder from $sourceBranch"
-
-# Push to remote
+# Push changes to remote
 git push
+
+Write-Host "✅ Successfully merged '$sourceBranch' into '$targetBranch' and pushed all changes!"
