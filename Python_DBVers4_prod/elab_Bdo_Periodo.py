@@ -1,4 +1,4 @@
-#New Reportistica --- Braca od koce
+#New Reportistica --- mmmmmm
 ###Codice da completare
 #Estrae elenco dipendenti 
 # #def EstraeRepGMRE(fTest,fListDip,fListRep,fNomeFileOut):
